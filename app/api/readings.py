@@ -7,7 +7,16 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.models.models import Device, Reading
-from app.schemas.schemas import ReadingCreate, ReadingRead, StatsResponse, TaskAccepted, TaskResult, UserStatsResponse
+from app.schemas.schemas import (
+    CompetencyBySpecialtiesResponse,
+    MotivatorBySpecialtiesResponse,
+    ReadingCreate,
+    ReadingRead,
+    StatsResponse,
+    TaskAccepted,
+    TaskResult,
+    UserStatsResponse,
+)
 from app.services import analytics
 from app.tasks.analytics_tasks import device_stats_task, user_stats_task
 from app.tasks.celery_app import celery_app
@@ -81,6 +90,30 @@ def user_stats_async(
         period_to.isoformat() if period_to else None,
     )
     return TaskAccepted(task_id=task.id)
+
+
+@router.get("/competencies/by-specialties", response_model=CompetencyBySpecialtiesResponse)
+def competency_by_specialties(
+    specialties: str = Query(..., description="Comma-separated list of specialties"),
+    year: str = Query(..., description="Academic year"),
+    course: str | None = Query(default=None, description="Course number"),
+    db: Session = Depends(get_db),
+) -> dict:
+    specialty_list = [s.strip() for s in specialties.split(",") if s.strip()]
+    data = analytics.get_competency_by_specialties(db, specialty_list, year, course)
+    return {"data": data}
+
+
+@router.get("/motivators/by-specialties", response_model=MotivatorBySpecialtiesResponse)
+def motivator_profile_by_specialties(
+    specialties: str = Query(..., description="Comma-separated list of specialties"),
+    year: str = Query(..., description="Academic year"),
+    course: str | None = Query(default=None, description="Course number"),
+    db: Session = Depends(get_db),
+) -> dict:
+    specialty_list = [s.strip() for s in specialties.split(",") if s.strip()]
+    data = analytics.get_motivator_profile_by_specialties(db, specialty_list, year, course)
+    return {"data": data}
 
 
 @router.get("/tasks/{task_id}", response_model=TaskResult)

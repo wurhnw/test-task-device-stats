@@ -81,3 +81,47 @@ class TaskResult(BaseModel):
     task_id: str
     status: str
     result: dict | None = None
+
+
+class CompetencySpecialtyItem(BaseModel):
+    specialty: str
+    leadership: int | None = None
+    analysis: int | None = None
+    partnership: int | None = None
+    digital_literacy: int | None = None
+    critical_thinking: int | None = None
+    creativity: int | None = None
+    communication: int | None = None
+    teamwork: int | None = None
+    emotional_intelligence: int | None = None
+    adaptability: int | None = None
+    self_education: int | None = None
+    responsibility: int | None = None
+
+
+class CompetencyBySpecialtiesResponse(BaseModel):
+    data: list[CompetencySpecialtyItem]
+
+
+class MotivatorSpecialtyItem(BaseModel):
+    specialty: str
+    career: int | None = None
+    altruism: int | None = None
+    creativity: int | None = None
+    money: int | None = None
+    power: int | None = None
+    independence: int | None = None
+    knowledge: int | None = None
+    communication: int | None = None
+    recognition: int | None = None
+    safety: int | None = None
+    achievement: int | None = None
+    self_development: int | None = None
+    leadership: int | None = None
+    teamwork: int | None = None
+    stability: int | None = None
+    challenge: int | None = None
+
+
+class MotivatorBySpecialtiesResponse(BaseModel):
+    data: list[MotivatorSpecialtyItem]
